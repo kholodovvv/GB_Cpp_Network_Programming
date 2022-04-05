@@ -1,4 +1,5 @@
 #ifdef _WIN32
+#pragma comment (lib,"Ws2_32.lib")
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
@@ -6,7 +7,6 @@
 #include <stdio.h>
 #include <cstring>
 #include <stdlib.h>
-#include <unistd.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -30,10 +30,22 @@ int main(int argc, char const *argv[])
     }
 
 
-    const int port { std::stoi(argv[1]) };
+    #ifdef _WIN32
+    
+    WSADATA wsaData; //Создание структуры типа WSADATA, в которую автоматически, в момент создания, загружаются данные о версии сокетов
+
+    int error = WSAStartup(MAKEWORD(2, 0), &wsaData); //Вызов функции создания сокетов WSAStartup, 1-м параметром передаётся запрашиваемая версия сокетов
+
+    if (error == SOCKET_ERROR)
+    {
+        std::cerr << "FAILED TO CREATE SOCKET!" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    const int port{ std::atoi(argv[1]) };
 
     int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); //Создаём сокет
-    #ifdef _WIN32
+
         if(sock == INVALID_SOCKET) {
             std::cerr << "FAILED TO CREATE SOCKET!" << std::endl;
             return EXIT_FAILURE;
@@ -41,6 +53,9 @@ int main(int argc, char const *argv[])
             std::cout << "Starting echo server on the port " << port << "...\n";
         }
     #else
+    const int port{ std::stoi(argv[1]) };
+    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP); //Создаём сокет
+
         if(sock == -1) {
             std::cerr << "FAILED TO CREATE SOCKET!" << std::endl;
             return EXIT_FAILURE;
@@ -82,7 +97,7 @@ int main(int argc, char const *argv[])
     // socket address used to store client address
     struct sockaddr_in client_address = {0};
     socklen_t client_address_len = sizeof(sockaddr_in);
-    ssize_t recv_len = 0;
+    int recv_len = 0;
 
     std::cout << "Running echo server...\n" << std::endl;
 
