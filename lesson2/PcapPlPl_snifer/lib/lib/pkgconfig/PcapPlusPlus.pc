@@ -1,0 +1,11 @@
+prefix=../GB_Cpp_Network/PcapPlPl_snifer
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: PcapPlusPlus
+Description: a multiplatform C++ network sniffing and packet parsing and crafting framework. It is meant to be lightweight, efficient and easy to use
+Version: 21.11+
+URL: https://pcapplusplus.github.io
+Libs: -L${libdir} -lPcap++ -lPacket++ -lCommon++ -lpcap -lpthread 
+CFlags: -I${includedir}/pcapplusplus 

@@ -1,0 +1,14 @@
+Determining if the function pcap_open exists failed with the following output:
+Change Dir: /home/sa/GB_Cpp_Network/pcap_sniffer/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/snap/clion/184/bin/ninja/linux/ninja cmTC_67334 && [1/2] Building C object CMakeFiles/cmTC_67334.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_67334
+FAILED: cmTC_67334 
+: && /usr/bin/cc -DCHECK_FUNCTION_EXISTS=pcap_open  CMakeFiles/cmTC_67334.dir/CheckFunctionExists.c.o -o cmTC_67334  /usr/lib/x86_64-linux-gnu/libpcap.so && :
+/usr/bin/ld: CMakeFiles/cmTC_67334.dir/CheckFunctionExists.c.o: в функции «main»:
+CheckFunctionExists.c:(.text+0x14): неопределённая ссылка на «pcap_open»
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.
+
+
+
