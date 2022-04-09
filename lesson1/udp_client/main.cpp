@@ -1,4 +1,5 @@
 #ifdef _WIN32
+#pragma comment (lib,"Ws2_32.lib")
 #include <winsock2.h>
 #include <windows.h>
 #include <ws2tcpip.h>
@@ -6,7 +7,6 @@
 #include <stdio.h>
 #include <cstring>
 #include <stdlib.h>
-#include <unistd.h>
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -20,19 +20,34 @@
 
 int main() {
 
-    std::string user_answer;
+    char user_answer[255];
     bool exitFlag = true;
     int server_port;
     char buffer[255];
 
     while(exitFlag) {
-
+        
         do {
             std::cout << "ENTER PORT SERVER" << std::endl;
             std::cin >> user_answer;
-            server_port = std::stoi(user_answer);
+            #ifdef _WIN32
+                server_port = std::atoi(user_answer);
+            #else
+                server_port = std::stoi(user_answer);
+            #endif
         } while (server_port <= 0);
 
+     #ifdef _WIN32
+        WSADATA wsaData; //Создание структуры типа WSADATA, в которую автоматически, в момент создания, загружаются данные о версии сокетов
+
+        int error = WSAStartup(MAKEWORD(2, 0), &wsaData); //Вызов функции создания сокетов WSAStartup, 1-м параметром передаётся запрашиваемая версия сокетов
+
+            if (error == SOCKET_ERROR)
+            {
+                 std::cerr << "FAILED TO CREATE SOCKET!" << std::endl;
+                return EXIT_FAILURE;
+            }
+    #endif
 
         int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
@@ -65,9 +80,9 @@ int main() {
 
         std::cout << "ENTER MESSAGE" << std::endl;
         std::cin >> buffer;
-
-        sendto(sock, buffer, sizeof(buffer), MSG_CONFIRM,
-               reinterpret_cast<const sockaddr *>(&addr), sizeof(addr));
+        
+        sendto(sock, buffer, sizeof(buffer), 0,
+            reinterpret_cast<const sockaddr*>(&addr), sizeof(addr));
 
         std::cout << std::endl;
         std::cout << "THE MESSAGE HAS BEEN SENT..." << std::endl;
@@ -75,7 +90,7 @@ int main() {
 
         socklen_t server_address_len = sizeof(sockaddr_in);
 
-        ssize_t recv_len = 0;
+        int recv_len = 0;
         recv_len = recvfrom(sock, buffer, sizeof(buffer) - 1, 0,
                             reinterpret_cast<sockaddr *>(&addr), &server_address_len);
 
