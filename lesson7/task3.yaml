@@ -1,0 +1,42 @@
+    swagger: '2.0'
+    info:
+      version: 1.0.0
+      title: API for libhttpserver
+    host: localhost:8080
+    schemes:
+        - http
+    basePath: /
+    paths:
+      /message:
+        get:
+          tags:
+            - Send message
+          summary: Sending a simple message
+          parameters:
+            - in: query
+              name: body
+              type: string
+              default: Hi
+          responses:
+            '200':
+              description: Ok
+            '404':
+              description: Not found
+              
+      /:
+        get:
+          tags:
+            - User authorization
+          summary: Sending login and password
+          parameters:
+            - in: query
+              name: body
+              type: string
+              default: login=ivanov&password=ivan12345
+          responses:
+            '200':
+              description: Ok
+            '404':
+              description: Not found
+
+
